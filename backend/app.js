@@ -4,7 +4,9 @@ let cors = require('cors');
 let bodyParser = require('body-parser');
 let dbConfig = require('./db');
 const createError = require('http-errors');
-const studentRoute = require('../backend/routes/student.route');
+const studentRoute = require('./routes/student.route.js');
+const userRoute = require('./routes/user.route.js');
+const auth = require('./middleware/auth');
 
 mongoose.Promise = global.Promise;
 mongoose.connect(dbConfig.db, {
@@ -23,7 +25,10 @@ app.use(bodyParser.urlencoded({
 
 app.use(cors());
 app.use('/students', studentRoute)
-
+app.use('/user', userRoute)
+app.post("/welcome", auth, (req, res) => {
+    res.status(200).send("Welcome!");
+})
 const port = process.env.PORT || 4000;
 const server = app.listen(port, () => {
     console.log("Connected to port " + port);
